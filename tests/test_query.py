@@ -1,4 +1,4 @@
-<"""Check that `query`ing an `NEODatabase` accurately produces close approaches.
+"""Check that `query`ing an `NEODatabase` accurately produces close approaches.
 
 There are a plethora of ways to combine the arguments to `create_filters`, which
 correspond to different command-line options. This modules tests the options in

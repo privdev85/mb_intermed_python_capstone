@@ -1,5 +1,3 @@
-import pandas as pd
-
 """Convert datetimes to and from strings.
 
 NASA's dataset provides timestamps as naive datetimes (corresponding to UTC).
@@ -14,6 +12,7 @@ provide that level of resolution, so the output format also will not.
 """
 import datetime
 import numpy as np
+import pandas as pd
 
 
 def booltransform(obj):
@@ -32,6 +31,8 @@ transformdict = {
     "bool": lambda obj: booltransform(obj),
 }
 
+def transform_to_str(cval):
+    return str(cval).replace('None','')
 
 def coerce_input(obj, intended_type, transformdict, required=False):
     try:

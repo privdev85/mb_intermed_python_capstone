@@ -17,6 +17,7 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
+import itertools
 
 
 class UnsupportedCriterionError(NotImplementedError):
@@ -88,12 +89,12 @@ class VelocityFilter(AttributeFilter):
         return approach.velocity
 class DiameterFilter(AttributeFilter):
     @classmethod
-    def get(cls,neo):
-        return neo.diameter
+    def get(cls,approach):
+        return approach.neo.diameter
 class HazardousFilter(AttributeFilter):
     @classmethod
-    def get(cls,neo):
-        return neo.hazardous
+    def get(cls,approach):
+        return approach.neo.hazardous
 
 
 def identify_operator(filter):
@@ -181,5 +182,7 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    if n:
+        return itertools.islice(iterator,n)
+    else:
+        return iterator

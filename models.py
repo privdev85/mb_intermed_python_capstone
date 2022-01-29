@@ -1,9 +1,5 @@
 """Represent models for near-Earth objects and their close approaches.
 
-
-
-
-
 The `NearEarthObject` class represents a near-Earth object. Each has a unique
 primary designation, an optional unique name, an optional diameter, and a flag
 for whether the object is potentially hazardous.

@@ -16,6 +16,11 @@ import pandas as pd
 
 
 def booltransform(obj):
+    """Transform string and None to corresponding boolean values.
+
+    :param obj: String object
+    :return: Boolean version of input
+    """
     transformdict = {
         "Y": True,
         "N": False,
@@ -38,10 +43,23 @@ transformdict = {
 
 
 def transform_to_str(cval):
+    """Transform input object to string.
+
+    :param cval: Input object
+    :return: String version of input
+    """
     return str(cval).replace("None", "")
 
 
 def coerce_input(obj, intended_type, transformdict, required=False):
+    """Transform input to required dtype.
+
+    :param obj: Input object
+    :param intended_type: Object defining target dtype
+    :param transformdict: Dictionary indicating necessary transformation function for expected target dtypes
+    :param required: Boolean that indicates if such transformation is required
+    :return: Input object in target dtype
+    """
     try:
         return transformdict[intended_type](obj)
     except:
@@ -85,8 +103,11 @@ def datetime_to_str(dt):
 
 
 def transform_obs_to_df(obs_list, idxname):
-    """
-    Transform NEO and approaches objects to a pandas dataframe.
+    """Transform NEO and approaches objects to a pandas dataframe.
+
+    :param obs_list: List of custom objects
+    :param idxname: Column name for column capturing indexes
+    :return: Pandas Dataframe with information on custom objects
     """
     df = pd.DataFrame(
         [element.__dict__.values() for element in obs_list],
@@ -97,6 +118,12 @@ def transform_obs_to_df(obs_list, idxname):
 
 
 def feature_to_index_dict(feature, obs_list):
+    """Lookup index of given feature.
+
+    :param feature: String with feature name
+    :param obs_list: List of objects
+    :return: Dictionary with index of features
+    """
     return dict(
         zip([getattr(obj, feature) for obj in obs_list], range(0, len(obs_list)))
     )

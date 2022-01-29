@@ -71,40 +71,64 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Represent object when printed.
+
+        :return: String containing main information on object.
+        """
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
 class DateFilter(AttributeFilter):
+    """Filter based on Date of Approach."""
+
     @classmethod
     def get(cls, approach):
+        """Get the respective filter."""
         return approach.time.date()
 
 
 class DistanceFilter(AttributeFilter):
+    """Filter based on Distance of Approach."""
+
     @classmethod
     def get(cls, approach):
+        """Get the respective filter."""
         return approach.distance
 
 
 class VelocityFilter(AttributeFilter):
+    """Filter based on Velocity of Approach."""
+
     @classmethod
     def get(cls, approach):
+        """Get the respective filter."""
         return approach.velocity
 
 
 class DiameterFilter(AttributeFilter):
+    """Filter based on Diameter of Neo."""
+
     @classmethod
     def get(cls, approach):
+        """Get the respective filter."""
         return approach.neo.diameter
 
 
 class HazardousFilter(AttributeFilter):
+    """Filter based on whether Neo is hazardous."""
+
     @classmethod
     def get(cls, approach):
+        """Get the respective filter."""
         return approach.neo.hazardous
 
 
 def identify_operator(filter):
+    """Identify logical operator from text pattern.
+
+    :param filter: String representration of filter
+    :return: Operator
+    """
     lower_substrings = ["max", "end"]
     greater_substrings = ["min", "start"]
 
@@ -117,6 +141,11 @@ def identify_operator(filter):
 
 
 def strip_filter_to_root_name(filter):
+    """Strip filter by removing operator text representation.
+
+    :param filter: String representation of filter
+    :return: Stripped string (after removing operator text suffix/prefix)
+    """
     to_be_filtered = ["start_", "end_", "_max", "_min"]
     for remove_term in to_be_filtered:
         filter = filter.replace(remove_term, "")
@@ -135,23 +164,6 @@ def create_filters(
     diameter_max=None,
     hazardous=None,
 ):
-
-    defined_filters = [filter for (filter, val) in locals().items() if val is not None]
-    collected_filters = []
-    filter_mapping = {
-        "date": DateFilter,
-        "distance": DistanceFilter,
-        "velocity": VelocityFilter,
-        "diameter": DiameterFilter,
-        "hazardous": HazardousFilter,
-    }
-    for filter in defined_filters:
-        root_filter_name = strip_filter_to_root_name(filter)
-        filter_to_be_added = filter_mapping[root_filter_name](
-            identify_operator(filter), locals()[filter]
-        )
-        collected_filters.append(filter_to_be_added)
-
     """Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
@@ -181,6 +193,23 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
+    defined_filters = [filter for (filter, val) in locals().items() if val is not None]
+    collected_filters = []
+    filter_mapping = {
+        "date": DateFilter,
+        "distance": DistanceFilter,
+        "velocity": VelocityFilter,
+        "diameter": DiameterFilter,
+        "hazardous": HazardousFilter,
+    }
+    for filter in defined_filters:
+        root_filter_name = strip_filter_to_root_name(filter)
+        filter_to_be_added = filter_mapping[root_filter_name](
+            identify_operator(filter), locals()[filter]
+        )
+        collected_filters.append(filter_to_be_added)
+
+
     return collected_filters
 
 

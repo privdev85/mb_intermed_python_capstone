@@ -1,5 +1,3 @@
-from helpers import transform_obs_to_df, feature_to_index_dict
-
 """A database encapsulating collections of near-Earth objects and their close approaches.
 
 A `NEODatabase` holds an interconnected data set of NEOs and close approaches.
@@ -13,7 +11,7 @@ data on NEOs and close approaches extracted by `extract.load_neos` and
 
 You'll edit this file in Tasks 2 and 3.
 """
-
+from helpers import transform_obs_to_df, feature_to_index_dict
 
 class NEODatabase:
     """A database of near-Earth objects and their close approaches.
@@ -50,6 +48,10 @@ class NEODatabase:
         self._neos_name_to_idx = feature_to_index_dict("name", self._neos)
 
     def merge_neos_approaches(self):
+        """Merge NEO objects and approaches.
+
+        :return: pd Dataframe with row that contain merge of neos and approaches
+        """
         dfneos = transform_obs_to_df(self._neos, idxname="idx_neo")
         dfappro = transform_obs_to_df(self._approaches, idxname="idx_approach")
         matches_pre = dfneos.merge(
@@ -64,6 +66,11 @@ class NEODatabase:
         return matches
 
     def get_neo_from_idx(self, idx):
+        """Return NEO via given index.
+
+        :param idx: Integer that indicates index
+        :return: Neo object or none
+        """
         if idx != None:
             return self._neos[idx]
         else:
@@ -106,6 +113,10 @@ class NEODatabase:
         return self.get_neo_from_idx(index)
 
     def cross_reference_neos_approaches(self):
+        """Indicate which NEO belongs to which approach and vice versa.
+
+        :return: None
+        """
         df = self._matches_df
 
         for index_tuple in list(zip(df["idx_neo"], df["idx_approach"])):

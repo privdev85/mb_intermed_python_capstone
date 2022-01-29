@@ -24,7 +24,6 @@ def load_neos(neo_csv_path="data//neos.csv"):
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
-
     neo_feat_dict = {
         "designation": "pdes",
         "name": "name",

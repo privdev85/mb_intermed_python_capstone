@@ -16,7 +16,12 @@ import pandas as pd
 
 
 def booltransform(obj):
-    transformdict = {"Y": True, "N": False, "":False, None: False} ### transforming None to False since test would otherwise not pass
+    transformdict = {
+        "Y": True,
+        "N": False,
+        "": False,
+        None: False,
+    }  ### transforming None to False since test would otherwise not pass
     if obj in transformdict.keys():
         return transformdict[obj]
     if isinstance(obj, bool) or obj in [0, 1]:
@@ -26,13 +31,15 @@ def booltransform(obj):
 
 
 transformdict = {
-    "str": lambda obj: str(obj) if obj not in ["",None] else None,
+    "str": lambda obj: str(obj) if obj not in ["", None] else None,
     "float": lambda obj: float(obj) if obj not in ["", None] else float(np.nan),
     "bool": lambda obj: booltransform(obj),
 }
 
+
 def transform_to_str(cval):
-    return str(cval).replace('None','')
+    return str(cval).replace("None", "")
+
 
 def coerce_input(obj, intended_type, transformdict, required=False):
     try:
@@ -76,14 +83,20 @@ def datetime_to_str(dt):
     """
     return datetime.datetime.strftime(dt, "%Y-%m-%d %H:%M")
 
-def transform_obs_to_df(obs_list,idxname):
-        """
-        Transform NEO and approaches objects to a pandas dataframe.
-        """
-        df = pd.DataFrame([element.__dict__.values() for element in obs_list], columns=obs_list[0].__dict__.keys())
-        df[idxname] = df.index
-        return df
+
+def transform_obs_to_df(obs_list, idxname):
+    """
+    Transform NEO and approaches objects to a pandas dataframe.
+    """
+    df = pd.DataFrame(
+        [element.__dict__.values() for element in obs_list],
+        columns=obs_list[0].__dict__.keys(),
+    )
+    df[idxname] = df.index
+    return df
 
 
-def feature_to_index_dict(feature,obs_list):
-    return dict(zip([getattr(obj,feature) for obj in obs_list],range(0, len(obs_list))))
+def feature_to_index_dict(feature, obs_list):
+    return dict(
+        zip([getattr(obj, feature) for obj in obs_list], range(0, len(obs_list)))
+    )

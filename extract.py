@@ -40,9 +40,11 @@ def load_neos(neo_csv_path="data//neos.csv"):
                 for key, val in neo_feat_dict.items():
                     neo_feat_dict[key] = header.index(val)
             else:
-                neolist.append(NearEarthObject(
-                    **{key: row[ind] for key, ind in neo_feat_dict.items()}
-                ))
+                neolist.append(
+                    NearEarthObject(
+                        **{key: row[ind] for key, ind in neo_feat_dict.items()}
+                    )
+                )
     return neolist
 
 
@@ -65,13 +67,10 @@ def load_approaches(cad_json_path="data/cad.json"):
     for feature in cap_dict.keys():
         cap_dict[feature] = close_app["fields"].index(cap_dict[feature])
 
-    ### rename key to be consistent with Approach class attributes
-    cap_dict['_designation'] = cap_dict.pop('designation')
+    cap_dict["_designation"] = cap_dict.pop("designation")
 
     close_approach_coll = [
-        CloseApproach(
-            **{key: element[ind] for key, ind in cap_dict.items()}
-        )
+        CloseApproach(**{key: element[ind] for key, ind in cap_dict.items()})
         for element in close_app["data"]
     ]
     return close_approach_coll

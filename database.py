@@ -1,4 +1,4 @@
-from helpers import transform_obs_to_df,feature_to_index_dict
+from helpers import transform_obs_to_df, feature_to_index_dict
 
 """A database encapsulating collections of near-Earth objects and their close approaches.
 
@@ -46,21 +46,24 @@ class NEODatabase:
         self._approaches = approaches
         self._matches_df = self.merge_neos_approaches()
         self.cross_reference_neos_approaches()
-        self._neos_des_to_idx = feature_to_index_dict('designation',self._neos)
-        self._neos_name_to_idx = feature_to_index_dict('name',self._neos)
-
+        self._neos_des_to_idx = feature_to_index_dict("designation", self._neos)
+        self._neos_name_to_idx = feature_to_index_dict("name", self._neos)
 
     def merge_neos_approaches(self):
-        dfneos = transform_obs_to_df(self._neos,idxname='idx_neo')
-        dfappro = transform_obs_to_df(self._approaches,idxname='idx_approach')
-        matches_pre = dfneos.merge(dfappro, left_on='designation', right_on='_designation')
-        cols_of_interest = [col for col in matches_pre.columns if col not in ['designation', 'approaches', 'neo']]
+        dfneos = transform_obs_to_df(self._neos, idxname="idx_neo")
+        dfappro = transform_obs_to_df(self._approaches, idxname="idx_approach")
+        matches_pre = dfneos.merge(
+            dfappro, left_on="designation", right_on="_designation"
+        )
+        cols_of_interest = [
+            col
+            for col in matches_pre.columns
+            if col not in ["designation", "approaches", "neo"]
+        ]
         matches = matches_pre[cols_of_interest]
         return matches
 
-
-
-    def get_neo_from_idx(self,idx):
+    def get_neo_from_idx(self, idx):
         if idx != None:
             return self._neos[idx]
         else:
@@ -79,7 +82,7 @@ class NEODatabase:
         :param designation: The primary designation of the NEO to search for.
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
-        index = self._neos_des_to_idx.get(designation,None)
+        index = self._neos_des_to_idx.get(designation, None)
         return self.get_neo_from_idx(index)
 
     def get_neo_by_name(self, name):
@@ -96,20 +99,21 @@ class NEODatabase:
         :param name: The name, as a string, of the NEO to search for.
         :return: The `NearEarthObject` with the desired name, or `None`.
         """
-        for ineligible_key in ['', 'None']:
-            _ = self._neos_name_to_idx.pop(ineligible_key, '')
-        index = self._neos_name_to_idx.get(name,None)
+        for ineligible_key in ["", "None"]:
+            _ = self._neos_name_to_idx.pop(ineligible_key, "")
+        index = self._neos_name_to_idx.get(name, None)
 
         return self.get_neo_from_idx(index)
 
     def cross_reference_neos_approaches(self):
         df = self._matches_df
 
-        for index_tuple in list(zip(df['idx_neo'],df['idx_approach'])):
-            self._neos[index_tuple[0]].approaches.append(self._approaches[index_tuple[1]])
+        for index_tuple in list(zip(df["idx_neo"], df["idx_approach"])):
+            self._neos[index_tuple[0]].approaches.append(
+                self._approaches[index_tuple[1]]
+            )
             self._approaches[index_tuple[1]].neo = self._neos[index_tuple[0]]
         return
-
 
     def query(self, filters=()):
         """Query close approaches to generate those that match a collection of filters.

@@ -73,33 +73,40 @@ class AttributeFilter:
     def __repr__(self):
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
+
 class DateFilter(AttributeFilter):
     @classmethod
-    def get(cls,approach):
+    def get(cls, approach):
         return approach.time.date()
+
 
 class DistanceFilter(AttributeFilter):
     @classmethod
-    def get(cls,approach):
+    def get(cls, approach):
         return approach.distance
+
 
 class VelocityFilter(AttributeFilter):
     @classmethod
-    def get(cls,approach):
+    def get(cls, approach):
         return approach.velocity
+
+
 class DiameterFilter(AttributeFilter):
     @classmethod
-    def get(cls,approach):
+    def get(cls, approach):
         return approach.neo.diameter
+
+
 class HazardousFilter(AttributeFilter):
     @classmethod
-    def get(cls,approach):
+    def get(cls, approach):
         return approach.neo.hazardous
 
 
 def identify_operator(filter):
-    lower_substrings = ['max', 'end']
-    greater_substrings = ['min', 'start']
+    lower_substrings = ["max", "end"]
+    greater_substrings = ["min", "start"]
 
     if any([substring in filter for substring in greater_substrings]):
         return operator.ge
@@ -108,11 +115,13 @@ def identify_operator(filter):
     else:
         return operator.eq
 
+
 def strip_filter_to_root_name(filter):
-    to_be_filtered = ['start_','end_','_max','_min']
+    to_be_filtered = ["start_", "end_", "_max", "_min"]
     for remove_term in to_be_filtered:
-        filter = filter.replace(remove_term,'')
+        filter = filter.replace(remove_term, "")
     return filter
+
 
 def create_filters(
     date=None,
@@ -124,22 +133,24 @@ def create_filters(
     velocity_max=None,
     diameter_min=None,
     diameter_max=None,
-    hazardous=None):
+    hazardous=None,
+):
 
     defined_filters = [filter for (filter, val) in locals().items() if val is not None]
     collected_filters = []
     filter_mapping = {
-     "date":DateFilter,
-     "distance":DistanceFilter,
-     "velocity":VelocityFilter,
-     "diameter":DiameterFilter,
-     "hazardous":HazardousFilter
-                      }
+        "date": DateFilter,
+        "distance": DistanceFilter,
+        "velocity": VelocityFilter,
+        "diameter": DiameterFilter,
+        "hazardous": HazardousFilter,
+    }
     for filter in defined_filters:
         root_filter_name = strip_filter_to_root_name(filter)
-        filter_to_be_added = filter_mapping[root_filter_name](identify_operator(filter),locals()[filter])
+        filter_to_be_added = filter_mapping[root_filter_name](
+            identify_operator(filter), locals()[filter]
+        )
         collected_filters.append(filter_to_be_added)
-
 
     """Create a collection of filters from user-specified criteria.
 
@@ -183,6 +194,6 @@ def limit(iterator, n=None):
     :yield: The first (at most) `n` values from the iterator.
     """
     if n:
-        return itertools.islice(iterator,n)
+        return itertools.islice(iterator, n)
     else:
         return iterator
